@@ -11,15 +11,35 @@ function! InWikiLink()
     endif
 endfunction
 
+function! JournalFooter()
+    let time = tolower(strftime("%I:%M%p"))
+    let date = strftime("%A - %b %d %G - ")
+    let stamp = date . time
+    let padding = repeat('=', (78 - len(stamp))/2 - 3)
+    let padded = padding . '\  ' . stamp . '  /' . padding
+    return padded
+endfunction
+
+function! CreateJournalEntry()
+    call EditWikiPage('journal')
+    setl foldlevel=0
+    echohl String | let title = input("Journal Entry Title: ") | echohl None
+    let footer = JournalFooter()
+    let template = ["# " . title, '', '', '', footer, '']
+    call append(0, template)
+    call cursor(3, 1)
+    normal za
+endfunction
+
 function! MakeOrFollowLink()
     if InWikiLink() | call FollowLink() | else | call Linkify() | endif
 endfunction
 
 function! ExtractLinkText(wiki_link)
-    let left_trimmed = substitute(a:wiki_link, '^\[\[', '', '')
-    let full_trimmed = substitute(left_trimmed, '\]\]$', '', '')
-    let link_text = tolower(full_trimmed)
-    return link_text
+    let left_trimmed = substitute(a:wiki_link, '^.*\[\[', '', '')
+    let full_trimmed = substitute(left_trimmed, '\]\].*$', '', '')
+    " let link_text = tolower(full_trimmed)
+    return full_trimmed
 endfunction
 
 function! FollowLink()
@@ -49,7 +69,7 @@ function! Linkify()
 endfunction
 
 function! EditWikiPage(page)
-    let page_path = g:swiki_root . a:page . '.mkd'
+    let page_path = tolower(g:swiki_root . a:page . '.mkd')
     let page_is_new = !filereadable(expand(page_path))
     execute "silent edit " . page_path
     if (g:swiki_current_page=='')
@@ -65,6 +85,7 @@ function! EditWikiPage(page)
 endfunction
 
 function! PopPageStack()
+    if empty(g:swiki_pagestack) | return | endif
     let prior_page = remove(g:swiki_pagestack, 0)
     let g:swiki_current_page = ''
     call EditWikiPage(prior_page)
@@ -116,4 +137,5 @@ let g:swiki_pagestack = []
 let g:swiki_current_page = ''
 let g:swiki_root = '~/swiki/'
 execute "autocmd BufNewFile,BufRead " . g:swiki_root . "* call WikiMode()"
-nmap <leader>wik :call OpenWikiIndex()<cr>
+nmap <leader>wk :call OpenWikiIndex()<cr>
+nmap <leader>jr :call CreateJournalEntry()<cr>
