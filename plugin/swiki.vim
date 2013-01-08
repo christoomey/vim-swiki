@@ -14,6 +14,9 @@ endfunction
 function! JournalFooter()
     let time = tolower(strftime("%I:%M%p"))
     let date = strftime("%A - %b %d %G - ")
+    if date == '' " Windows parses strftime different
+        let date = strftime("%A - %b %d %Y - ")
+    endif
     let stamp = date . time
     let padding = repeat('=', (78 - len(stamp))/2 - 3)
     let padded = padding . '\  ' . stamp . '  /' . padding
