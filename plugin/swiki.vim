@@ -11,6 +11,24 @@ function! InWikiLink()
     endif
 endfunction
 
+function! WikiLinkSelect()
+    call CtrlPGeneric(['index', 'journal', 'hello'], 'LinkSelected')
+endfunction
+
+function! LinkSelected(link)
+    execute "normal a[[" . a:link . "]]"
+    call StartAppend()
+endfunction
+
+function! StartAppend()
+    if strlen(getline(".")) > col(".")
+        normal l
+        startinsert
+    else
+        startinsert!
+    endif
+endfunction
+
 function! JournalFooter()
     let time = tolower(strftime("%I:%M%p"))
     let date = strftime("%A - %b %d %G - ")
@@ -119,21 +137,22 @@ function! FindLink(direction)
     normal 2l
 endfunction
 
+function! OpenWikiIndex()
+    call EditWikiPage('index')
+    call WikiMode()
+endfunction
+
 function! WikiMode()
     nmap <buffer> <cr> :call MakeOrFollowLink()<cr>
     vmap <buffer> <cr> :call VisualLinkify()<cr>
     nmap <buffer> <bs> :call PopPageStack()<cr>
     nmap <buffer> <leader>wl /\[\[.\{-}\]\]<cr>
-    nmap <tab> :call FindNextLink()<cr>
-    nmap <S-tab> :call FindPreviousLink()<cr>
+    imap <buffer> <C-l> :silent call WikiLinkSelect()<cr>
+    nmap <buffer> <tab> :call FindNextLink()<cr>
+    nmap <buffer> <S-tab> :call FindPreviousLink()<cr>
     syntax match wikiLink "\[\[.\{-}\]\]"
     highlight link wikiLink Keyword
     setlocal foldlevel=1
-endfunction
-
-function! OpenWikiIndex()
-    call EditWikiPage('index')
-    call WikiMode()
 endfunction
 
 let g:swiki_pagestack = []
