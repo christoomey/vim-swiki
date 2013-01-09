@@ -11,8 +11,19 @@ function! InWikiLink()
     endif
 endfunction
 
+function! PageList()
+    let files = split(glob(g:swiki_root . "*"), '\n')
+    let pathless = map(files, 'substitute(v:val, ".*\\", "", "")')
+    let extensionless = map(pathless, 'substitute(v:val, ".mkd", "", "")')
+    return extensionless
+endfunction
+
 function! WikiLinkSelect()
-    call CtrlPGeneric(['index', 'journal', 'hello'], 'LinkSelected')
+    let current_ctrlp_win_location = g:ctrlp_match_window_bottom
+    let g:ctrlp_match_window_bottom = 1
+    let pages = PageList()
+    call CtrlPGeneric(pages, 'LinkSelected')
+    let g:ctrlp_match_window_bottom = current_ctrlp_win_location
 endfunction
 
 function! LinkSelected(link)
