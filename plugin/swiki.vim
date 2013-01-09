@@ -13,7 +13,11 @@ endfunction
 
 function! PageList()
     let files = split(glob(g:swiki_root . "*"), '\n')
-    let pathless = map(files, 'substitute(v:val, ".*\\", "", "")')
+    if has('unix')
+        let pathless = map(files, 'substitute(v:val, ".*\/", "", "")')
+    else
+        let pathless = map(files, 'substitute(v:val, ".*\\", "", "")')
+    end
     let extensionless = map(pathless, 'substitute(v:val, ".mkd", "", "")')
     return extensionless
 endfunction
