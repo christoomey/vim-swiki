@@ -18,8 +18,10 @@ function! PageList()
     else
         let pathless = map(files, 'substitute(v:val, ".*\\", "", "")')
     end
+    let current_page = substitute(expand("%"),".mkd",'','')
     let extensionless = map(pathless, 'substitute(v:val, ".mkd", "", "")')
-    return extensionless
+    let pagelist_without_current = filter(extensionless, 'v:val != current_page')
+    return pagelist_without_current
 endfunction
 
 function! WikiLinkSelect()
