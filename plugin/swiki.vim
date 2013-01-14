@@ -174,7 +174,7 @@ endfunction
 
 let g:swiki_pagestack = []
 let g:swiki_current_page = ''
-let g:swiki_root = '~/swiki/'
+let g:swiki_root = '~/wiki/'
 execute "autocmd BufNewFile,BufRead " . g:swiki_root . "* call WikiMode()"
 nmap <leader>wk :call OpenWikiIndex()<cr>
 nmap <leader>jr :call CreateJournalEntry()<cr>
