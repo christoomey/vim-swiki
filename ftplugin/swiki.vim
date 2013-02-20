@@ -3,6 +3,7 @@ if exists("b:did_ftplugin")
 endif
 
 runtime! ftplugin/markdown.vim
+runtime after/ftplugin/markdown/folding.vim
 
 nmap <buffer> <cr> :call MakeOrFollowLink()<cr>
 vmap <buffer> <cr> :call VisualLinkify()<cr>
