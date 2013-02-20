@@ -84,6 +84,7 @@ function! FollowLink()
     if !InWikiLink() | return | endif
     let wiki_link = expand("<cWORD>")
     let link_text = ExtractLinkText(wiki_link)
+    write
     call EditWikiPage(link_text)
 endfunction
 
